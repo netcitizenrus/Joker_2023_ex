@@ -16,6 +16,8 @@ import java.util.stream.IntStream;
 public class Main {
     public static void main(String[] args) throws URISyntaxException {
 
+        int artistId = 14256;
+
         Map<Integer, String> artistMap = readArtists();
         LinkedList<int[]> interactions = readInteractions();
 
@@ -27,22 +29,24 @@ public class Main {
         System.out.println(users);
         System.out.println(artists);
 
-        DMatrixSparseTriplet work = new DMatrixSparseTriplet(artists + 1, users + 1, 114562);
+        DMatrixSparseTriplet work = new DMatrixSparseTriplet(artists + 1, users + 1, 1);
 
-        interactions.forEach(row -> work.addItem(row[1], row[0], (double) row[2]));
+        // заполняем спарс триплеты
+        interactions.forEach(row -> work.addItem(row[1], row[0], row[2]));
 
-        DMatrixSparseCSC matrix1 = new DMatrixSparseCSC(1, 2);
-        DMatrixSparseCSC matrix = DConvertMatrixStruct.convert(work, matrix1);
+        DMatrixSparseCSC matrix = DConvertMatrixStruct.convert(work, (DMatrixSparseCSC) null);
+
         DMatrixSparseCSC matrix_t = new DMatrixSparseCSC(matrix);
-        DMatrixSparseCSC result = new DMatrixSparseCSC(matrix);
         CommonOps_DSCC.transpose(matrix, matrix_t, null);
 
        // в реальности не можем такое умножать (искать похожих)
-        CommonOps_DSCC.mult(matrix, matrix_t, result);
+        DMatrixSparseCSC result = CommonOps_DSCC.mult(matrix, matrix_t, null);
 
-        SimpleMatrix simp = SimpleMatrix.wrap(result);
-        double[] row = simp.getRow(4194).toArray2()[0];
-        System.out.println(getTopKIndices(row, 15).stream().map(artistMap::get).toList());
+        SimpleMatrix denseMatrix = SimpleMatrix.wrap(result);
+        double[] row = denseMatrix.getRow(artistId).toArray2()[0];
+
+        System.out.println(getTopKIndices(row, 10).stream().map(artistMap::get).toList());
+
     }
         static Map<Integer, String> readArtists() throws URISyntaxException {
 
