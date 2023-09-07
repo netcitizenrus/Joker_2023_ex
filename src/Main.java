@@ -29,6 +29,8 @@ public class Main {
         System.out.println(users);
         System.out.println(artists);
 
+        //Возможно добавить про то, что если написать на ванильной Джаве, то не вывезем + бенчи
+
         DMatrixSparseTriplet work = new DMatrixSparseTriplet(artists + 1, users + 1, 1);
 
         // заполняем спарс триплеты
@@ -47,6 +49,11 @@ public class Main {
 
         System.out.println(getTopKIndices(row, 10).stream().map(artistMap::get).toList());
 
+
+//        interactions_sparse_transposed = interactions_sparse.transpose(copy=True)
+//        Piu = normalize(interactions_sparse_transposed, norm='l2', axis=1)
+//
+//        fit = Pui * Piu * Pui
     }
         static Map<Integer, String> readArtists() throws URISyntaxException {
 
